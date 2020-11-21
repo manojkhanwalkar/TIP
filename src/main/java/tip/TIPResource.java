@@ -4,6 +4,8 @@ package tip;
 import com.codahale.metrics.annotation.Timed;
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKSet;
+import data.VerifyRequest;
+import data.VerifyResponse;
 
 
 import javax.ws.rs.POST;
@@ -35,9 +37,9 @@ public class TIPResource {
     @Timed
     @Path("/verify")
     @Produces(MediaType.APPLICATION_JSON)
-    public String verify(String request) {
+    public VerifyResponse verify(VerifyRequest request) {
 
-        return "To be implemented";
+        return null;
 
     }
 
