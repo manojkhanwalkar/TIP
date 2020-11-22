@@ -2,12 +2,14 @@ package wallet;
 
 import com.nimbusds.jose.JWEHeader;
 import com.nimbusds.jose.jwk.JWK;
+import data.Attributes;
 import data.Token;
+import data.VerifyRequest;
 import util.JWUtil;
 
 public class Wallet {
 
-    String tipURL;
+
 
     public static Wallet create(String tipURL)
     {
@@ -21,16 +23,24 @@ public class Wallet {
 
     Token token = null;
 
+    TipConnector connector ;
+
     private Wallet(String tipURL)
     {
-        this.tipURL = tipURL;
+        connector = new TipConnector(tipURL);
         privateKey = JWUtil.createKey();
         publicKey = privateKey.toPublicJWK();
     }
 
-    public void verify()
+    public void verify(Attributes data)
     {
         //TODO - call the TIP server and verify the data and get a token back
+
+        VerifyRequest request = new VerifyRequest();
+        request.setAttributes(data);
+        request.setClientPublicKey(publicKey.toJSONString());
+
+        connector.verify(request);
     }
 
     public void getVerifiedData()
