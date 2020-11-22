@@ -39,10 +39,14 @@ public class VerificationManager {
 
         MerkleTree tree = generateTree(data);
         Token token = createToken();
+
+        System.out.println(MerkleTreeUtil.toJSON(tree));
+
     }
 
     private MerkleTree generateTree(Attributes data)
     {
+        List<AttributeNode> attributeNodes = new ArrayList<>();
 
         try {
             Class attribClass = data.getClass();
@@ -50,34 +54,24 @@ public class VerificationManager {
             for (Method method :
                     methods) {
                 if (method.getName().startsWith("get")){
-                    System.out.println(method.getName() + " " + method.invoke(data));
+                    //System.out.println(method.getName() + " " + method.invoke(data));
+
+                    AttributeNode attribNode = new AttributeNode();
+                    attribNode.setName(method.getName());
+                    attribNode.setValue((String)method.invoke(data));
+                    attribNode.setId(RandomIdGenerator.getId());
+
+                    attributeNodes.add(attribNode);
+
                 }
+
+
             }
         } catch ( IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
         }
 
-        List<AttributeNode> attributeNodes = new ArrayList<>();
-
-
-        AttributeNode attribNode1 = new AttributeNode();
-        attribNode1.setName("FNAME");
-        attribNode1.setValue("Hello");
-        attribNode1.setId(RandomIdGenerator.getId());
-
-        AttributeNode attribNode2 = new AttributeNode();
-        attribNode2.setName("LNAME");
-        attribNode2.setValue("World");
-        attribNode2.setId(RandomIdGenerator.getId());
-
-
-        AttributeNode attribNode3 = new AttributeNode();
-        attribNode3.setName("SSN");
-        attribNode3.setValue("100-20-300");
-        attribNode3.setId(RandomIdGenerator.getId());
-
-        MerkleTreeUtil util = new MerkleTreeUtil();
-        MerkleTree tree = util.build(List.of(attribNode1,attribNode2,attribNode3));
+        MerkleTree tree = MerkleTreeUtil.build(attributeNodes);
         return tree;
 
     }
