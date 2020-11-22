@@ -12,6 +12,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import java.text.ParseException;
 import java.util.List;
 
 
@@ -39,6 +40,11 @@ public class TIPResource {
     @Produces(MediaType.APPLICATION_JSON)
     public VerifyResponse verify(VerifyRequest request) {
 
+        try {
+            verificationManager.verify(request.getAttributes(), JWK.parse(request.getClientPublicKey()));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
         return null;
 
     }

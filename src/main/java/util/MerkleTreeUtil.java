@@ -57,7 +57,7 @@ public class MerkleTreeUtil {
     }
 
 
-    public MerkleTree build(List<AttributeNode> nodes) {
+    public static MerkleTree build(List<AttributeNode> nodes) {
 
         List<AttributeNode> attribNodes = new ArrayList<>();
         attribNodes.addAll(nodes);
@@ -110,7 +110,7 @@ public class MerkleTreeUtil {
 
     }
 
-    private void buildHashNode(Queue<Node> queue, Node node1) {
+    private static void buildHashNode(Queue<Node> queue, Node node1) {
         Node node2 = queue.remove();
         HashNode hashNode = new HashNode();
         hashNode.setId(RandomIdGenerator.getId());
@@ -344,7 +344,7 @@ public class MerkleTreeUtil {
     }
 
 
-    private void padtoNextpowerof2(List<AttributeNode> attributeNodes)
+    private static void padtoNextpowerof2(List<AttributeNode> attributeNodes)
     {
         int size = attributeNodes.size();
 

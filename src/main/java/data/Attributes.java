@@ -23,89 +23,87 @@ import java.util.Map;
 public class Attributes {
 
     /**
-     * 
+     *
      * (Required)
-     * 
+     *
      */
     @JsonProperty("givenName")
     private String givenName;
     /**
-     * 
+     *
      * (Required)
-     * 
+     *
      */
     @JsonProperty("familyName")
     private String familyName;
     /**
-     * 
+     *
      * (Required)
-     * 
+     *
      */
     @JsonProperty("residentAddress")
     private String residentAddress;
     /**
-     * 
+     *
      * (Required)
-     * 
+     *
      */
     @JsonProperty("residentCity")
     private String residentCity;
     /**
-     * 
+     *
      * (Required)
-     * 
+     *
      */
     @JsonProperty("residentState")
     private String residentState;
     /**
-     * 
+     *
      * (Required)
-     * 
+     *
      */
     @JsonProperty("residentPostalCode")
     private String residentPostalCode;
     /**
-     * 
+     *
      * (Required)
-     * 
+     *
      */
     @JsonProperty("residentCountry")
     private String residentCountry;
     /**
-     * 
+     *
      * (Required)
-     * 
+     *
      */
     @JsonProperty("phoneNumber")
     private String phoneNumber;
     /**
-     * 
+     *
      * (Required)
-     * 
+     *
      */
     @JsonProperty("cardNumber")
     private String cardNumber;
     /**
-     * 
+     *
      * (Required)
-     * 
+     *
      */
     @JsonProperty("birthDate")
     private String birthDate;
     /**
-     * 
+     *
      * (Required)
-     * 
+     *
      */
     @JsonProperty("email")
     private String email;
-    @JsonIgnore
-    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
     /**
-     * 
+     *
      * (Required)
-     * 
+     *
      */
     @JsonProperty("givenName")
     public String getGivenName() {
@@ -113,9 +111,9 @@ public class Attributes {
     }
 
     /**
-     * 
+     *
      * (Required)
-     * 
+     *
      */
     @JsonProperty("givenName")
     public void setGivenName(String givenName) {
@@ -123,9 +121,9 @@ public class Attributes {
     }
 
     /**
-     * 
+     *
      * (Required)
-     * 
+     *
      */
     @JsonProperty("familyName")
     public String getFamilyName() {
@@ -133,9 +131,9 @@ public class Attributes {
     }
 
     /**
-     * 
+     *
      * (Required)
-     * 
+     *
      */
     @JsonProperty("familyName")
     public void setFamilyName(String familyName) {
@@ -143,9 +141,9 @@ public class Attributes {
     }
 
     /**
-     * 
+     *
      * (Required)
-     * 
+     *
      */
     @JsonProperty("residentAddress")
     public String getResidentAddress() {
@@ -153,9 +151,9 @@ public class Attributes {
     }
 
     /**
-     * 
+     *
      * (Required)
-     * 
+     *
      */
     @JsonProperty("residentAddress")
     public void setResidentAddress(String residentAddress) {
@@ -163,9 +161,9 @@ public class Attributes {
     }
 
     /**
-     * 
+     *
      * (Required)
-     * 
+     *
      */
     @JsonProperty("residentCity")
     public String getResidentCity() {
@@ -173,9 +171,9 @@ public class Attributes {
     }
 
     /**
-     * 
+     *
      * (Required)
-     * 
+     *
      */
     @JsonProperty("residentCity")
     public void setResidentCity(String residentCity) {
@@ -183,9 +181,9 @@ public class Attributes {
     }
 
     /**
-     * 
+     *
      * (Required)
-     * 
+     *
      */
     @JsonProperty("residentState")
     public String getResidentState() {
@@ -193,9 +191,9 @@ public class Attributes {
     }
 
     /**
-     * 
+     *
      * (Required)
-     * 
+     *
      */
     @JsonProperty("residentState")
     public void setResidentState(String residentState) {
@@ -203,9 +201,9 @@ public class Attributes {
     }
 
     /**
-     * 
+     *
      * (Required)
-     * 
+     *
      */
     @JsonProperty("residentPostalCode")
     public String getResidentPostalCode() {
@@ -213,9 +211,9 @@ public class Attributes {
     }
 
     /**
-     * 
+     *
      * (Required)
-     * 
+     *
      */
     @JsonProperty("residentPostalCode")
     public void setResidentPostalCode(String residentPostalCode) {
@@ -223,9 +221,9 @@ public class Attributes {
     }
 
     /**
-     * 
+     *
      * (Required)
-     * 
+     *
      */
     @JsonProperty("residentCountry")
     public String getResidentCountry() {
@@ -233,9 +231,9 @@ public class Attributes {
     }
 
     /**
-     * 
+     *
      * (Required)
-     * 
+     *
      */
     @JsonProperty("residentCountry")
     public void setResidentCountry(String residentCountry) {
@@ -243,9 +241,9 @@ public class Attributes {
     }
 
     /**
-     * 
+     *
      * (Required)
-     * 
+     *
      */
     @JsonProperty("phoneNumber")
     public String getPhoneNumber() {
@@ -253,9 +251,9 @@ public class Attributes {
     }
 
     /**
-     * 
+     *
      * (Required)
-     * 
+     *
      */
     @JsonProperty("phoneNumber")
     public void setPhoneNumber(String phoneNumber) {
@@ -263,9 +261,9 @@ public class Attributes {
     }
 
     /**
-     * 
+     *
      * (Required)
-     * 
+     *
      */
     @JsonProperty("cardNumber")
     public String getCardNumber() {
@@ -273,9 +271,9 @@ public class Attributes {
     }
 
     /**
-     * 
+     *
      * (Required)
-     * 
+     *
      */
     @JsonProperty("cardNumber")
     public void setCardNumber(String cardNumber) {
@@ -283,9 +281,9 @@ public class Attributes {
     }
 
     /**
-     * 
+     *
      * (Required)
-     * 
+     *
      */
     @JsonProperty("birthDate")
     public String getBirthDate() {
@@ -293,9 +291,9 @@ public class Attributes {
     }
 
     /**
-     * 
+     *
      * (Required)
-     * 
+     *
      */
     @JsonProperty("birthDate")
     public void setBirthDate(String birthDate) {
@@ -303,9 +301,9 @@ public class Attributes {
     }
 
     /**
-     * 
+     *
      * (Required)
-     * 
+     *
      */
     @JsonProperty("email")
     public String getEmail() {
@@ -313,23 +311,15 @@ public class Attributes {
     }
 
     /**
-     * 
+     *
      * (Required)
-     * 
+     *
      */
     @JsonProperty("email")
     public void setEmail(String email) {
         this.email = email;
     }
 
-    @JsonAnyGetter
-    public Map<String, Object> getAdditionalProperties() {
-        return this.additionalProperties;
-    }
 
-    @JsonAnySetter
-    public void setAdditionalProperty(String name, Object value) {
-        this.additionalProperties.put(name, value);
-    }
 
 }
