@@ -31,7 +31,7 @@ public class TIPResource {
 
     }
 
-
+    VerificationManager verificationManager = new VerificationManager();
 
     @POST
     @Timed
