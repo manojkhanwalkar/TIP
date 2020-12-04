@@ -26,4 +26,11 @@ public class Token {
     public int hashCode() {
         return Objects.hash(token);
     }
+
+    @Override
+    public String toString() {
+        return "Token{" +
+                "token='" + token + '\'' +
+                '}';
+    }
 }

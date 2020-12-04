@@ -4,6 +4,7 @@ package tip;
 import com.codahale.metrics.annotation.Timed;
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKSet;
+import data.Token;
 import data.VerifyRequest;
 import data.VerifyResponse;
 
@@ -40,12 +41,15 @@ public class TIPResource {
     @Produces(MediaType.APPLICATION_JSON)
     public VerifyResponse verify(VerifyRequest request) {
 
+        VerifyResponse verifyResponse = new VerifyResponse();
+
         try {
-            verificationManager.verify(request.getAttributes(), JWK.parse(request.getClientPublicKey()));
+            Token token = verificationManager.verify(request.getAttributes(), JWK.parse(request.getClientPublicKey()));
+            verifyResponse.setToken(token);
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        return null;
+        return verifyResponse;
 
     }
 

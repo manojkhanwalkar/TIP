@@ -126,14 +126,15 @@ public class CryptUtil {
     {
         try {
             KeyGenerator generator = KeyGenerator.getInstance("AES");
-            generator.init(128); // The AES key size in number of bits
+            generator.init(256); // The AES key size in number of bits
             SecretKey secKey = generator.generateKey();
 
             Cipher cipher =  Cipher.getInstance("AES");
             cipher.init(Cipher.ENCRYPT_MODE, secKey);
             String encryptedMessage = Base64.getEncoder().encodeToString(cipher.doFinal(message.getBytes("UTF-8")));
 
-            Cipher cipher1 = Cipher.getInstance("RSA/ECB/PKCS1Padding");
+        
+            Cipher cipher1 = Cipher.getInstance("ECIES");
             cipher1.init(Cipher.PUBLIC_KEY, key);
             String encryptedKey = Base64.getEncoder().encodeToString(cipher1.doFinal(secKey.getEncoded()));
 
@@ -159,46 +160,11 @@ public class CryptUtil {
         return null;
     }
 
-/*
-    public static SymKeyStringTuple encryptWithIV(String message, PublicKey key)
-    {
-        try {
-
-            byte[] iv = new byte[128/8];
-            secureRandom.nextBytes(iv);
-
-
-            KeyGenerator generator = KeyGenerator.getInstance("AES");
-            generator.init(128); // The AES key size in number of bits
-            SecretKey secKey = generator.generateKey();
-
-            Cipher cipher =  Cipher.getInstance("AES");
-
-            IvParameterSpec ivSpec=new IvParameterSpec(Base64.getDecoder().decode(iv));
-            cipher.init(Cipher.ENCRYPT_MODE, secKey,ivSpec);
-            String encryptedMessage = Base64.getEncoder().encodeToString(cipher.doFinal(message.getBytes("UTF-8")));
-
-            Cipher cipher1 = Cipher.getInstance("RSA/ECB/PKCS1Padding");
-            cipher1.init(Cipher.PUBLIC_KEY, key);
-            String encryptedKey = Base64.getEncoder().encodeToString(cipher1.doFinal(secKey.getEncoded()));
-
-            SymKeyStringTuple tuple = new SymKeyStringTuple();
-            tuple.key = encryptedKey;
-            tuple.message= encryptedMessage;
-
-            return tuple;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return null;
-    }*/
-
 
     public static String decrypt(String message, String key, PrivateKey privateKey)  {
 
       try {
-          Cipher cipher = Cipher.getInstance("RSA");
+          Cipher cipher = Cipher.getInstance("ECIES");
           cipher.init(Cipher.DECRYPT_MODE, privateKey);
 
           byte[] decryptedKey = cipher.doFinal(Base64.getDecoder().decode(key));
@@ -228,70 +194,6 @@ public class CryptUtil {
 
 
 
-
-    public static PublicKey getPublicKeyFromCertFile(String file,String keyType)
-    {
-        return getPublicKey(extractPublicKeyFromFile(file));
-    }
-
-
-
-    public static PrivateKey getPrivateKeyDerFromFile(String file, String keyType){
-        try {
-            File privKeyFile = new File(file);
-            // read private key DER file
-            DataInputStream dis = new DataInputStream(new FileInputStream(privKeyFile));
-            byte[] privKeyBytes = new byte[(int)privKeyFile.length()];
-            dis.read(privKeyBytes);
-            dis.close();
-
-            KeyFactory kf = KeyFactory.getInstance(keyType);
-            // decode private key
-            PKCS8EncodedKeySpec privSpec = new PKCS8EncodedKeySpec(privKeyBytes);
-            PrivateKey privKey = kf.generatePrivate(privSpec);
-
-            return privKey;
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (InvalidKeySpecException e) {
-            e.printStackTrace();
-        }
-
-        return null;
-    }
-
-
-
-    public static void main(String[] args) throws Exception {
-
-  /*
-     private static final String ALGO = "SHA256withECDSA";
-
-  PublicKey pub =  getPublicKey(extractPublicKeyFromFile("/home/manoj/IdeaProjects/phoenix/src/main/resources/idpcertificate.pem"));
-        PrivateKey priv = loadPrivateKey("/home/manoj/IdeaProjects/phoenix/src/main/resources/idpprivatekey.der");
-
-        String plainText = "Hello World from EC Public and Private keys";
-
-        Signature ecdsaSign = Signature.getInstance(ALGO);
-        ecdsaSign.initSign(priv);
-        ecdsaSign.update(plainText.getBytes("UTF-8"));
-        byte[] signature = ecdsaSign.sign();
-
-
-        Signature ecdsaVerify = Signature.getInstance(ALGO);
-
-        ecdsaVerify.initVerify(pub);
-        ecdsaVerify.update(plainText.getBytes("UTF-8"));
-        boolean result = ecdsaVerify.verify(signature);
-
-
-        System.out.println(result);*/
-
-
-
-    }
 
 
 

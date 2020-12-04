@@ -1,14 +1,13 @@
 package tip;
 
+import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.jwk.JWK;
 import data.Attributes;
 import data.Token;
+import data.VerifiedData;
 import shareablemerkletree.AttributeNode;
 import shareablemerkletree.MerkleTree;
-import util.CryptUtil;
-import util.JWUtil;
-import util.MerkleTreeUtil;
-import util.RandomIdGenerator;
+import util.*;
 
 import javax.crypto.SecretKey;
 import java.lang.reflect.InvocationTargetException;
@@ -16,10 +15,13 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 
 public class VerificationManager {
+
+    ConcurrentMap<Token, SymKeyStringTuple>  tokenVerifiedDataMap = new ConcurrentHashMap<>();
 
     JWK signPrivateKey;
     JWK signPublicKey;
@@ -29,7 +31,7 @@ public class VerificationManager {
         createSignKeys();
     }
 
-    public void verify(Attributes data, JWK clientPublicKey)
+    public Token verify(Attributes data, JWK clientPublicKey)
     {
         // create Merkle tree from the attributes
         // create AES key for encryption
@@ -37,10 +39,24 @@ public class VerificationManager {
         // encrypt the AES key using the client public key
         // generate token and store token to tuple mapping (tuple contains encrypted AES and merkle tree and TIP signature for the tree)
 
-        MerkleTree tree = generateTree(data);
-        Token token = createToken();
+        try {
+            MerkleTree tree = generateTree(data);
+            Token token = createToken();
 
-        System.out.println(MerkleTreeUtil.toJSON(tree));
+            VerifiedData verifiedData = VerifiedDataUtil.create(tree,signPrivateKey);
+
+            var tuple = CryptUtil.encrypt(VerifiedDataUtil.toJSON(verifiedData),clientPublicKey.toECKey().toPublicKey());
+
+           // System.out.println(MerkleTreeUtil.toJSON(tree));
+
+            tokenVerifiedDataMap.put(token,tuple);
+
+            return token;
+        } catch (JOSEException e) {
+            e.printStackTrace();
+        }
+        return null ;
+
 
     }
 

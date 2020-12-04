@@ -40,7 +40,7 @@ public class Wallet {
         request.setAttributes(data);
         request.setClientPublicKey(publicKey.toJSONString());
 
-        connector.verify(request);
+        token = connector.verify(request).getToken();
     }
 
     public void getVerifiedData()
