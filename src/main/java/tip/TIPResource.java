@@ -4,9 +4,7 @@ package tip;
 import com.codahale.metrics.annotation.Timed;
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKSet;
-import data.Token;
-import data.VerifyRequest;
-import data.VerifyResponse;
+import data.*;
 
 
 import javax.ws.rs.POST;
@@ -57,9 +55,9 @@ public class TIPResource {
     @Timed
     @Path("/token")
     @Produces(MediaType.APPLICATION_JSON)
-    public String token(String request) {
+    public TokenResponse token(TokenRequest request) {
 
-        return "To be implemented";
+        return verificationManager.get(request.getToken());
 
     }
 

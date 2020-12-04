@@ -2,9 +2,7 @@ package wallet;
 
 import com.nimbusds.jose.JWEHeader;
 import com.nimbusds.jose.jwk.JWK;
-import data.Attributes;
-import data.Token;
-import data.VerifyRequest;
+import data.*;
 import util.JWUtil;
 
 public class Wallet {
@@ -32,9 +30,8 @@ public class Wallet {
         publicKey = privateKey.toPublicJWK();
     }
 
-    public void verify(Attributes data)
+    public synchronized void verify(Attributes data)
     {
-        //TODO - call the TIP server and verify the data and get a token back
 
         VerifyRequest request = new VerifyRequest();
         request.setAttributes(data);
@@ -43,9 +40,22 @@ public class Wallet {
         token = connector.verify(request).getToken();
     }
 
-    public void getVerifiedData()
+    public synchronized void getVerifiedData()
     {
-        // todo - present a token to the tip server and get the verified data back.
+        TokenRequest request = new TokenRequest();
+        request.setToken(token);
+
+        TokenResponse response = connector.token(request);
+
+        System.out.println(response.getEncryptedKey() + " \n" + response.getEncryptedVerifiedData());
+
+        /*TODO
+        decrypt the key using the private key and get the AES key
+        use that key to decrypt the message and get the VerifiedData string
+        and convert that from JSON to VerifiedData object
+        verify the signature using the public key in the verified data object.
+
+        */
     }
 
 

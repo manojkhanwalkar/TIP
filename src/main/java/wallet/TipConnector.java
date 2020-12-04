@@ -31,6 +31,13 @@ public class TipConnector {
 
     public TokenResponse token(TokenRequest tokenRequest)
     {
+        Optional<String>  result = connection.post(JSONUtil.toJSON(tokenRequest),"token");
+        if (result.isPresent())
+        {
+            TokenResponse response = (TokenResponse)JSONUtil.fromJSON(result.get(),TokenResponse.class);
+            return response;
+        }
+
         return null;
     }
 

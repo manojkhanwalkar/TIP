@@ -4,6 +4,7 @@ import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.jwk.JWK;
 import data.Attributes;
 import data.Token;
+import data.TokenResponse;
 import data.VerifiedData;
 import shareablemerkletree.AttributeNode;
 import shareablemerkletree.MerkleTree;
@@ -109,4 +110,15 @@ public class VerificationManager {
 
     }
 
+    public TokenResponse get(Token token) {
+        TokenResponse response = new TokenResponse();
+        var tuple = tokenVerifiedDataMap.get(token);
+        if (tuple!=null)
+        {
+            response.setEncryptedKey(tuple.getKey());
+            response.setEncryptedVerifiedData(tuple.getMessage());
+        }
+
+        return response;
+    }
 }

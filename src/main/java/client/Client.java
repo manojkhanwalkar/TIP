@@ -22,6 +22,8 @@ public class Client {
 
         wallet.verify(attributes);
 
+        wallet.getVerifiedData();
+
 
     }
 }
