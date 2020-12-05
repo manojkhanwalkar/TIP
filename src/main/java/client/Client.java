@@ -2,6 +2,7 @@ package client;
 
 import data.Attributes;
 import data.AttributesBuilder;
+import util.MerkleTreeUtil;
 import wallet.Wallet;
 
 public class Client {
@@ -22,7 +23,9 @@ public class Client {
 
         wallet.verify(attributes);
 
-        wallet.getVerifiedData();
+        var verData = wallet.getVerifiedData();
+
+        System.out.println(MerkleTreeUtil.fromJSON(verData.getElements()));
 
 
     }

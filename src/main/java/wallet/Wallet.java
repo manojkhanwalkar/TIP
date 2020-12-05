@@ -1,9 +1,15 @@
 package wallet;
 
+import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWEHeader;
 import com.nimbusds.jose.jwk.JWK;
 import data.*;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import util.CryptUtil;
+import util.JSONUtil;
 import util.JWUtil;
+
+import java.security.Security;
 
 public class Wallet {
 
@@ -28,6 +34,10 @@ public class Wallet {
         connector = new TipConnector(tipURL);
         privateKey = JWUtil.createKey();
         publicKey = privateKey.toPublicJWK();
+
+        Security.setProperty("crypto.policy", "unlimited");
+        Security.addProvider(new BouncyCastleProvider());
+
     }
 
     public synchronized void verify(Attributes data)
@@ -40,7 +50,7 @@ public class Wallet {
         token = connector.verify(request).getToken();
     }
 
-    public synchronized void getVerifiedData()
+    public synchronized VerifiedData getVerifiedData()
     {
         TokenRequest request = new TokenRequest();
         request.setToken(token);
@@ -48,6 +58,17 @@ public class Wallet {
         TokenResponse response = connector.token(request);
 
         System.out.println(response.getEncryptedKey() + " \n" + response.getEncryptedVerifiedData());
+
+        String resp = null;
+        try {
+            resp = CryptUtil.decrypt(response.getEncryptedVerifiedData(),response.getEncryptedKey(),privateKey.toECKey().toPrivateKey());
+        } catch (JOSEException e) {
+            e.printStackTrace();
+        }
+
+        VerifiedData verifiedData = (VerifiedData) JSONUtil.fromJSON(resp,VerifiedData.class);
+
+        return verifiedData;
 
         /*TODO
         decrypt the key using the private key and get the AES key
@@ -57,6 +78,8 @@ public class Wallet {
 
         */
     }
+
+
 
 
 

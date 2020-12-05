@@ -36,4 +36,6 @@ public class VerifiedData {
     public void setPublicKey(String publicKey) {
         this.publicKey = publicKey;
     }
+
+
 }
