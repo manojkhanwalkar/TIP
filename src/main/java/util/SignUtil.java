@@ -48,7 +48,7 @@ public class SignUtil {
     }
 
 
-    public synchronized boolean  verify(String messagetoVerify , String signature , JWK signPublicKey)  {
+    public static boolean  verify(String messagetoVerify , String signature , JWK signPublicKey)  {
 
         try {
             Signature ecdsaVerify = Signature.getInstance(ALGO);

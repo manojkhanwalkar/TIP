@@ -2,13 +2,13 @@ package data;
 
 public class ServiceResponse {
 
-    Token token;
+    String message;
 
-    public Token getToken() {
-        return token;
+    public String getMessage() {
+        return message;
     }
 
-    public void setToken(Token token) {
-        this.token = token;
+    public void setMessage(String message) {
+        this.message = message;
     }
 }

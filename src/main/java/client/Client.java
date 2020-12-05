@@ -2,6 +2,8 @@ package client;
 
 import data.Attributes;
 import data.AttributesBuilder;
+import data.ServiceRequest;
+import data.ServiceResponse;
 import util.MerkleTreeUtil;
 import wallet.Wallet;
 
@@ -26,6 +28,16 @@ public class Client {
         var verData = wallet.getVerifiedData();
 
         System.out.println(MerkleTreeUtil.fromJSON(verData.getElements()));
+
+        SampleServiceConnector connector = new SampleServiceConnector("https://localhost:8180/");
+
+        ServiceRequest request = new ServiceRequest();
+        request.setVerifiedData(verData);
+        ServiceResponse response = connector.service(request);
+
+        System.out.println(response.getMessage());
+
+
 
 
     }
