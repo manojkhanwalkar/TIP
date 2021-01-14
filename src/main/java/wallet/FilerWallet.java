@@ -1,9 +1,15 @@
 package wallet;
 
+import com.google.common.io.Resources;
 import com.nimbusds.jose.JOSEException;
+import com.nimbusds.jose.jwk.JWK;
 import data.*;
 import util.CryptUtil;
 import util.JSONUtil;
+import util.JWUtil;
+
+import java.net.URL;
+import java.nio.charset.Charset;
 
 public class FilerWallet extends Wallet{
 
@@ -12,17 +18,20 @@ public class FilerWallet extends Wallet{
 
     public static FilerWallet create(String tipURL)
     {
+        URL resource = FilerWallet.class.getClassLoader().getResource("key.json");
+        // var str = Resources.toString(resource, Charset.defaultCharset());
+        var key = JWUtil.readJWKFromFile(resource.getFile());
 
 
-        return new FilerWallet(tipURL);
+        return new FilerWallet(tipURL,key);
     }
 
 
     FilerConnector connector ;
 
-    private FilerWallet(String tipURL)
+    private FilerWallet(String tipURL, JWK key)
     {
-        super();
+        super(key);
         connector = new FilerConnector(tipURL);
 
     }

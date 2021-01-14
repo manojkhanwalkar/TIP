@@ -10,6 +10,9 @@ import com.nimbusds.jose.jwk.Curve;
 import com.nimbusds.jose.jwk.ECKey;
 import com.nimbusds.jose.jwk.JWK;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.PrivateKey;
@@ -154,6 +157,29 @@ public class JWUtil {
 
 
 
+    }
+
+    public static void writeToFile(JWK jwk,String fileName)
+    {
+        String str =  jwk.toJSONString();
+
+        try {
+            Files.writeString(Paths.get(fileName),str);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public  static JWK readJWKFromFile(String fileName)
+    {
+        try {
+            String str = Files.readString(Paths.get(fileName));
+            return JWK.parse(str);
+        } catch (ParseException | IOException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
 

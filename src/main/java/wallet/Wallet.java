@@ -21,15 +21,27 @@ public abstract class Wallet {
 
     Token token = null;
 
+    static
+    {
+        Security.setProperty("crypto.policy", "unlimited");
+        Security.addProvider(new BouncyCastleProvider());
+    }
+
     protected Wallet()
     {
 
         privateKey = JWUtil.createKey();
         publicKey = privateKey.toPublicJWK();
 
-        Security.setProperty("crypto.policy", "unlimited");
-        Security.addProvider(new BouncyCastleProvider());
+      /*  Security.setProperty("crypto.policy", "unlimited");
+        Security.addProvider(new BouncyCastleProvider());*/
 
+    }
+
+    protected Wallet(JWK key)
+    {
+        this.privateKey = key;
+        this.publicKey = privateKey.toPublicJWK();
     }
 
 
