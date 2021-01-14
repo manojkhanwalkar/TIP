@@ -70,3 +70,5 @@ The pattern does not cater to the following areas, which would need to be provid
 5. Use of a Nonce will provide additional security against replay attacks
 6. For an additional layer of protection of data in transit (on top of TLS 1.2) look at the P2PE design pattern https://github.com/manojkhanwalkar/P2PE/blob/master/README.md
 
+**Additional Use Case**
+The filer service showcases another use case for the design pattern. The client submits a file and receives back a token. The token can then be used to retrieve the file. The file is stored securely o the server as only te client with access to the provate key can decrypt the contents of the file. 
