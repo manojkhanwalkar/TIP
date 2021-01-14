@@ -1,7 +1,10 @@
 package client;
 
 import com.google.common.io.Files;
+import com.nimbusds.jose.JOSEException;
 import data.*;
+import util.CryptUtil;
+import util.JSONUtil;
 import util.MerkleTreeUtil;
 import wallet.FilerWallet;
 import wallet.TipWallet;

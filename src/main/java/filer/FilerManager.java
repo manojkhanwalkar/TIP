@@ -2,10 +2,7 @@ package filer;
 
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.jwk.JWK;
-import data.Attributes;
-import data.Token;
-import data.TokenResponse;
-import data.VerifiedData;
+import data.*;
 import shareablemerkletree.AttributeNode;
 import shareablemerkletree.MerkleTree;
 import util.*;
@@ -79,6 +76,21 @@ public class FilerManager {
        }
    }
 
+   private SymKeyStringTuple getFile(String fileName)
+   {
+       try {
+           Path path = Paths.get(filesDirectory+fileName);
+           String fileContents = Files.readString(path);
+           var tupleString = (SymKeyStringTuple)JSONUtil.fromJSON(fileContents,SymKeyStringTuple.class);
+
+           return tupleString;
+       } catch (IOException e) {
+           e.printStackTrace();
+       }
+
+        return null;
+   }
+
 
     private void createSignKeys()
     {
@@ -95,15 +107,21 @@ public class FilerManager {
 
     }
 
-  /*  public TokenResponse get(Token token) {
-        TokenResponse response = new TokenResponse();
-        var tuple = tokenVerifiedDataMap.get(token);
+    public FileRetrieveResponse retrieve(Token token) {
+        FileRetrieveResponse response = new FileRetrieveResponse();
+
+
+        var tuple = getFile(token.getToken());
         if (tuple!=null)
         {
             response.setEncryptedKey(tuple.getKey());
-            response.setEncryptedVerifiedData(tuple.getMessage());
+            var message = tuple.getMessage();
+           // var fileMeta = (FileMetaTuple)JSONUtil.fromJSON(message,FileMetaTuple.class);
+           // response.setFileName(fileMeta.getFileName());
+            response.setEncryptedFileContents(message);
+
         }
 
         return response;
-    }*/
+    }
 }

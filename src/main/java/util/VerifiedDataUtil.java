@@ -1,6 +1,7 @@
 package util;
 
 import com.nimbusds.jose.jwk.JWK;
+import data.FileMetaTuple;
 import data.VerifiedData;
 import shareablemerkletree.MerkleTree;
 
@@ -17,36 +18,6 @@ public class VerifiedDataUtil {
         return create(elements,signPrivateKey);
 
 
-    }
-
-    static class FileMetaTuple
-    {
-         String fileContents;
-         String fileName;
-
-        public FileMetaTuple(String fileContents, String fileName) {
-            this.fileContents = fileContents;
-            this.fileName = fileName;
-        }
-
-        public FileMetaTuple() {
-        }
-
-        public String getFileContents() {
-            return fileContents;
-        }
-
-        public void setFileContents(String fileContents) {
-            this.fileContents = fileContents;
-        }
-
-        public String getFileName() {
-            return fileName;
-        }
-
-        public void setFileName(String fileName) {
-            this.fileName = fileName;
-        }
     }
 
     public static VerifiedData create(String fileContents, String fileName , JWK signPrivateKey )

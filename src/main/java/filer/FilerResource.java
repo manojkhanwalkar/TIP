@@ -42,7 +42,7 @@ public class FilerResource {
         FileUpdateResponse fileUpdateResponse = new FileUpdateResponse();
 
         try {
-            Token token = filerManager.update(request.getBase64FileContents(), request.getBase64FileContents(),JWK.parse(request.getClientPublicKey()));
+            Token token = filerManager.update(request.getBase64FileContents(), request.getFileName(),JWK.parse(request.getClientPublicKey()));
             fileUpdateResponse.setToken(token);
         } catch (ParseException e) {
             e.printStackTrace();
@@ -57,7 +57,7 @@ public class FilerResource {
     @Produces(MediaType.APPLICATION_JSON)
     public FileRetrieveResponse retrieve(TokenRequest request) {
 
-        return null; //TODO = verificationManager.get(request.getToken());
+        return filerManager.retrieve(request.getToken());
 
     }
 
