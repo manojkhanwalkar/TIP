@@ -159,6 +159,27 @@ public class JWUtil {
 
     }
 
+    public static String keyWithPassPhrase(JWK jwk, String passPhrase)
+    {
+        StringXOR xor = new StringXOR();
+        var encodedStr = xor.encode(jwk.toJSONString(), passPhrase);
+
+        return encodedStr;
+    }
+
+    public static JWK keyFromStringWithPassPhrase(String encodedStr, String passPhrase)
+    {
+        StringXOR xor = new StringXOR();
+        var decodedStr = xor.decode(encodedStr, passPhrase);
+        try {
+            return JWK.parse(decodedStr);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return null;
+
+    }
+
     public static void writeToFile(JWK jwk,String fileName)
     {
         String str =  jwk.toJSONString();
