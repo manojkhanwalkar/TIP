@@ -62,13 +62,6 @@ public class FilerWallet extends Wallet{
 
         return fileMetaTuple;
 
-        /*TODO
-        decrypt the key using the private key and get the AES key
-        use that key to decrypt the message and get the VerifiedData string
-        and convert that from JSON to VerifiedData object
-        verify the signature using the public key in the verified data object.
-
-        */
     }
 
 

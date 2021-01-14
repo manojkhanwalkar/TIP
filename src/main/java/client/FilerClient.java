@@ -24,7 +24,7 @@ public class FilerClient {
 
         FilerWallet wallet = FilerWallet.create("https://localhost:8380/");
 
-        var fileName = "output.jpg";
+        var fileName = "README.txt";
         var fileStr = getFileContents("/home/manoj/Downloads", fileName);
 
         Token token = wallet.update(fileStr,fileName);
@@ -34,13 +34,26 @@ public class FilerClient {
         var verData = wallet.retrieve(token);
 
 
-
+        writeRetrievedFile("/tmp/", verData);
 
 
 
 
 
     }
+
+    private static void writeRetrievedFile(String filePath, FileMetaTuple verData) {
+        try {
+            File file = new File(filePath+verData.getFileName());
+
+            byte[] bytes = Base64.getDecoder().decode(verData.getFileContents());
+
+            Files.write(bytes,file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     static String getFileContents(String filePath, String fileName) throws IOException {
         byte[] bytes = Files.toByteArray(new File(filePath + "/" + fileName));
