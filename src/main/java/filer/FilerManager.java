@@ -10,8 +10,13 @@ import shareablemerkletree.AttributeNode;
 import shareablemerkletree.MerkleTree;
 import util.*;
 
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -19,37 +24,39 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 
-public class VerificationManager {
+public class FilerManager {
 
-    ConcurrentMap<Token, SymKeyStringTuple>  tokenVerifiedDataMap = new ConcurrentHashMap<>();
+    String filesDirectory = "/home/manoj/data/filer/";
 
     JWK signPrivateKey;
     JWK signPublicKey;
 
-    public VerificationManager()
+    //TODO - change the keys to static.
+
+    public FilerManager()
     {
         createSignKeys();
     }
 
-    public Token verify(Attributes data, JWK clientPublicKey)
+    public Token update(String fileContents, String fileName , JWK clientPublicKey)
     {
-        // create Merkle tree from the attributes
+
         // create AES key for encryption
         // encrypt the merkle tree
         // encrypt the AES key using the client public key
         // generate token and store token to tuple mapping (tuple contains encrypted AES and merkle tree and TIP signature for the tree)
 
-        try {
-            MerkleTree tree = generateTree(data);
+       try {
+
             Token token = createToken();
 
-            VerifiedData verifiedData = VerifiedDataUtil.create(tree,signPrivateKey);
+            VerifiedData verifiedData = VerifiedDataUtil.create(fileContents,fileName,signPrivateKey);
 
             var tuple = CryptUtil.encrypt(VerifiedDataUtil.toJSON(verifiedData),clientPublicKey.toECKey().toPublicKey());
 
-           // System.out.println(MerkleTreeUtil.toJSON(tree));
+            var tupleString = JSONUtil.toJSON(tuple);
 
-            tokenVerifiedDataMap.put(token,tuple);
+            createFile(token.getToken(),tupleString);
 
             return token;
         } catch (JOSEException e) {
@@ -60,38 +67,17 @@ public class VerificationManager {
 
     }
 
-    private MerkleTree generateTree(Attributes data)
-    {
-        List<AttributeNode> attributeNodes = new ArrayList<>();
 
-        try {
-            Class attribClass = data.getClass();
-            Method[] methods = attribClass.getDeclaredMethods();
-            for (Method method :
-                    methods) {
-                if (method.getName().startsWith("get")){
-                    //System.out.println(method.getName() + " " + method.invoke(data));
+   private void createFile(String fileName , String fileContents)
+   {
+      Path path = Paths.get(filesDirectory+fileName);
 
-                    AttributeNode attribNode = new AttributeNode();
-                    attribNode.setName(method.getName());
-                    attribNode.setValue((String)method.invoke(data));
-                    attribNode.setId(RandomIdGenerator.getId());
-
-                    attributeNodes.add(attribNode);
-
-                }
-
-
-            }
-        } catch ( IllegalAccessException | InvocationTargetException e) {
-            e.printStackTrace();
-        }
-
-        MerkleTree tree = MerkleTreeUtil.build(attributeNodes);
-        return tree;
-
-    }
-
+       try {
+           Files.writeString(path,fileContents);
+       } catch (IOException e) {
+           e.printStackTrace();
+       }
+   }
 
 
     private void createSignKeys()
@@ -109,7 +95,7 @@ public class VerificationManager {
 
     }
 
-    public TokenResponse get(Token token) {
+  /*  public TokenResponse get(Token token) {
         TokenResponse response = new TokenResponse();
         var tuple = tokenVerifiedDataMap.get(token);
         if (tuple!=null)
@@ -119,5 +105,5 @@ public class VerificationManager {
         }
 
         return response;
-    }
+    }*/
 }

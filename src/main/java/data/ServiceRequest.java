@@ -2,13 +2,13 @@ package data;
 
 public class ServiceRequest {
 
-    VerifiedData verifiedData;
+    VerifiedData<String> verifiedData;
 
-    public VerifiedData getVerifiedData() {
+    public VerifiedData<String> getVerifiedData() {
         return verifiedData;
     }
 
-    public void setVerifiedData(VerifiedData verifiedData) {
+    public void setVerifiedData(VerifiedData<String> verifiedData) {
         this.verifiedData = verifiedData;
     }
 }

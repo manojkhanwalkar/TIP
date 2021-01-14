@@ -1,6 +1,6 @@
 package data;
 
-public class VerifiedData {
+public class VerifiedData<T> {
 
     /*
     Elements is the string version of the merkle tree
@@ -9,15 +9,15 @@ public class VerifiedData {
     verified data is encrypted using the customers public key and hence cannot be tampered with after it has been signed and encrypted.
      */
 
-    String elements;
+    T elements;
     String signature;
     String publicKey;
 
-    public String getElements() {
+    public T getElements() {
         return elements;
     }
 
-    public void setElements(String elements) {
+    public void setElements(T elements) {
         this.elements = elements;
     }
 

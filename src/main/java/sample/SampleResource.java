@@ -40,7 +40,7 @@ public class SampleResource {
     @Produces(MediaType.APPLICATION_JSON)
     public ServiceResponse service(ServiceRequest request) {
 
-        VerifiedData data = request.getVerifiedData();
+        VerifiedData<String> data = request.getVerifiedData();
 
        MerkleTree tree =  MerkleTreeUtil.fromJSON(data.getElements());
 

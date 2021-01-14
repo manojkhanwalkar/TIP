@@ -22,6 +22,7 @@ public class FilerResource {
 
 
 
+
     public FilerResource(String template, String defaultName) {
         this.template = template;
         this.defaultName = defaultName;
@@ -30,7 +31,7 @@ public class FilerResource {
 
     }
 
-    VerificationManager verificationManager = new VerificationManager();
+    FilerManager filerManager = new FilerManager();
 
     @POST
     @Timed
@@ -40,12 +41,12 @@ public class FilerResource {
 
         FileUpdateResponse fileUpdateResponse = new FileUpdateResponse();
 
-       // try {
-            Token token = null; //TODO // verificationManager.verify(request.getAttributes(), JWK.parse(request.getClientPublicKey()));
+        try {
+            Token token = filerManager.update(request.getBase64FileContents(), request.getBase64FileContents(),JWK.parse(request.getClientPublicKey()));
             fileUpdateResponse.setToken(token);
-     /*   } catch (ParseException e) {
+        } catch (ParseException e) {
             e.printStackTrace();
-        }*/
+        }
         return fileUpdateResponse;
 
     }

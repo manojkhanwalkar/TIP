@@ -41,7 +41,7 @@ public class TipWallet extends Wallet{
         token = connector.verify(request).getToken();
     }
 
-    public synchronized VerifiedData getVerifiedData()
+    public synchronized VerifiedData<String> getVerifiedData()
     {
         TokenRequest request = new TokenRequest();
         request.setToken(token);
@@ -57,7 +57,7 @@ public class TipWallet extends Wallet{
             e.printStackTrace();
         }
 
-        VerifiedData verifiedData = (VerifiedData) JSONUtil.fromJSON(resp,VerifiedData.class);
+        VerifiedData<String> verifiedData = (VerifiedData) JSONUtil.fromJSON(resp,VerifiedData.class);
 
         return verifiedData;
 

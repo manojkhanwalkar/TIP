@@ -26,6 +26,8 @@ public class FilerClient {
 
         Token token = wallet.update(fileStr,fileName);
 
+        System.out.println("Token is " + token.getToken());
+
         var verData = wallet.retrieve(token);
 
 
