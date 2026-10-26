@@ -21,17 +21,9 @@ public class Connection {
 
 
 
-    private void initConnectionProps()
-    {
-        final Properties props = System.getProperties();
-        props.setProperty("jdk.internal.httpclient.disableHostnameVerification", Boolean.TRUE.toString());
-
-    }
-
     public Connection(String target)
     {
         this.target = target;
-        initConnectionProps();
         client = HttpClient.newHttpClient();
     }
 
@@ -53,8 +45,6 @@ public class Connection {
             HttpResponse<String> response =
                     client.send(httprequest, HttpResponse.BodyHandlers.ofString());
 
-
-            System.out.println(response);
 
            if (response.statusCode()==200)
                return Optional.of(response.body());

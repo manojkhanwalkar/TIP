@@ -72,3 +72,40 @@ The pattern does not cater to the following areas, which would need to be provid
 
 **Additional Use Case**
 The filer service showcases another use case for the design pattern. The client submits a file and receives back a token. The token can then be used to retrieve the file. The file is stored securely o the server as only te client with access to the provate key can decrypt the contents of the file. 
+
+**Running the services**
+
+No keys, keystores or passwords are kept in the repository. Generate them locally (never commit them) and pass their locations through environment variables.
+
+```bash
+mvn clean package
+JAR=target/TIP-1.0-SNAPSHOT.jar
+
+# TLS keystore for all three services; the certificate must name the host clients connect to
+keytool -genkeypair -alias tip -keyalg EC -groupname secp256r1 -dname CN=localhost \
+        -ext SAN=dns:localhost -keystore keystore.p12 -storetype PKCS12
+# trust store for the clients (hostname verification is enforced)
+keytool -exportcert -alias tip -keystore keystore.p12 -file tip.cer
+keytool -importcert -alias tip -file tip.cer -keystore truststore.p12 -storetype PKCS12
+
+# TIP signing key pair (private key for the TIP, public key pinned by the service provider)
+java -cp $JAR util.KeyGen tip-signing-key.json tip-public-key.json
+# long lived wallet key used by the filer client
+java -cp $JAR util.KeyGen wallet-key.json
+
+export TIP_KEYSTORE_PATH=$PWD/keystore.p12 TIP_KEYSTORE_PASSWORD=<keystore password>
+export TIP_SIGNING_KEY_PATH=$PWD/tip-signing-key.json     # tip.yml
+export TIP_PUBLIC_KEY_PATH=$PWD/tip-public-key.json       # sample.yml
+export FILER_FILES_DIR=/path/to/filer/storage             # filer.yml
+
+java -cp $JAR tip.TIPApplication server src/main/resources/tip.yml        # https://localhost:8280
+java -cp $JAR sample.SampleApplication server src/main/resources/sample.yml  # https://localhost:8180
+java -cp $JAR filer.FilerApplication server src/main/resources/filer.yml   # https://localhost:8380
+
+# clients
+CLIENT_TLS="-Djavax.net.ssl.trustStore=truststore.p12 -Djavax.net.ssl.trustStorePassword=<password>"
+java $CLIENT_TLS -cp $JAR client.Client
+java $CLIENT_TLS -Dtip.wallet.key=wallet-key.json ...   # FilerClient / FilerWallet (or TIP_WALLET_KEY_PATH)
+```
+
+The service provider only accepts signatures that verify against the configured TIP public key (`tipPublicKeyPath`); the public key carried inside a request is ignored. Admin connectors (ports 8181/8281/8381) listen on 127.0.0.1 only. Data is encrypted with AES-GCM; files stored by an older version of the filer (AES/ECB) can no longer be read.

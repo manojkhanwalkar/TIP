@@ -26,6 +26,26 @@ import java.util.UUID;
 public class JWUtil {
 
 
+    /**
+     * Parses an untrusted JWK string and accepts it only if it is a public (no private part)
+     * EC key on P-256.
+     */
+    public static Optional<JWK> parsePublicECKey(String json)
+    {
+        if (json == null) {
+            return Optional.empty();
+        }
+        try {
+            JWK key = JWK.parse(json);
+            if (key instanceof ECKey && !key.isPrivate() && Curve.P_256.equals(((ECKey) key).getCurve())) {
+                return Optional.of(key);
+            }
+        } catch (ParseException e) {
+            // fall through
+        }
+        return Optional.empty();
+    }
+
     public static JWK createKey()
     {
 

@@ -1,7 +1,10 @@
 package sample;
 
 
+import com.nimbusds.jose.jwk.JWK;
 import io.dropwizard.Application;
+import io.dropwizard.configuration.EnvironmentVariableSubstitutor;
+import io.dropwizard.configuration.SubstitutingSourceProvider;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 
@@ -18,7 +21,8 @@ public class SampleApplication extends Application<SampleConfiguration> {
 
     @Override
     public void initialize(Bootstrap<SampleConfiguration> bootstrap) {
-
+        bootstrap.setConfigurationSourceProvider(new SubstitutingSourceProvider(
+                bootstrap.getConfigurationSourceProvider(), new EnvironmentVariableSubstitutor(true)));
 
     }
 
@@ -27,7 +31,8 @@ public class SampleApplication extends Application<SampleConfiguration> {
                     Environment environment) {
         final SampleResource resource = new SampleResource(
                 configuration.getTemplate(),
-                configuration.getDefaultName()
+                configuration.getDefaultName(),
+                loadTipPublicKey(configuration.getTipPublicKeyPath())
         );
 
 
@@ -35,5 +40,14 @@ public class SampleApplication extends Application<SampleConfiguration> {
 
 
 }
+
+
+    private static JWK loadTipPublicKey(String path) {
+        JWK key = util.JWUtil.readJWKFromFile(path);
+        if (key == null) {
+            throw new IllegalStateException("Could not read TIP public key from " + path);
+        }
+        return key.toPublicJWK();
+    }
 
 }

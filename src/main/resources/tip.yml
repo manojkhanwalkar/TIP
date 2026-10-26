@@ -1,5 +1,7 @@
 template: Hello, %s!
 defaultName: Stranger
+# Private JWK used by the TIP to sign verified data (generate with util.KeyGen)
+signingKeyPath: ${TIP_SIGNING_KEY_PATH}
 
 server:
   #  softNofileLimit: 1000
@@ -7,15 +9,13 @@ server:
   applicationConnectors:
     - type: https
       port: 8280
-      keyStorePath: /home/manoj/IdeaProjects/TIP/src/main/resources/mytestkey.jks
-      keyStorePassword: password
-    #this requires the alpn-boot library on the JVM's boot classpath
-    #- type: h2
-    #  port: 8445
-    #  keyStorePath: example.keystore
-    #  keyStorePassword: example
+      # Keystore and password come from the environment; nothing secret is kept in the repository.
+      keyStorePath: ${TIP_KEYSTORE_PATH}
+      keyStorePassword: ${TIP_KEYSTORE_PASSWORD}
   adminConnectors:
     - type: https
       port: 8281
-      keyStorePath: /home/manoj/IdeaProjects/TIP/src/main/resources/mytestkey.jks
-      keyStorePassword: password
+      # admin endpoints (metrics, tasks) are only reachable from the local host
+      bindHost: 127.0.0.1
+      keyStorePath: ${TIP_KEYSTORE_PATH}
+      keyStorePassword: ${TIP_KEYSTORE_PASSWORD}

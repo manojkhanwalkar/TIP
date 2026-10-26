@@ -67,6 +67,9 @@ public class SignUtil {
             e.printStackTrace();
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
+        } catch (IllegalArgumentException e) {
+            // malformed (non base64) signature
+            return false;
         }
 
         return false;
