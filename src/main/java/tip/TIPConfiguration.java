@@ -11,6 +11,21 @@ public class TIPConfiguration extends Configuration {
     @NotEmpty
     private String defaultName = "Stranger";
 
+    // Path to the TIP's private signing key (JWK JSON). Service providers pin the matching
+    // public key, so it must be stable across restarts.
+    @NotEmpty
+    private String signingKeyPath;
+
+    @JsonProperty
+    public String getSigningKeyPath() {
+        return signingKeyPath;
+    }
+
+    @JsonProperty
+    public void setSigningKeyPath(String signingKeyPath) {
+        this.signingKeyPath = signingKeyPath;
+    }
+
     @JsonProperty
     public String getTemplate() {
         return template;

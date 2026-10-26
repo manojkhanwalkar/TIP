@@ -56,7 +56,18 @@ public class FilerClient {
 
     private static void writeRetrievedFile(String filePath, FileMetaTuple verData) {
         try {
-            File file = new File(filePath+verData.getFileName());
+            // The file name comes back from the server: keep only its last path element so a
+            // malicious or compromised server cannot write outside the output directory.
+            java.nio.file.Path outputDir = java.nio.file.Paths.get(filePath).toAbsolutePath().normalize();
+            java.nio.file.Path namePart = verData.getFileName() == null ? null : java.nio.file.Paths.get(verData.getFileName()).getFileName();
+            if (namePart == null || namePart.toString().isEmpty() || namePart.toString().equals("..")) {
+                throw new IOException("invalid file name returned by server");
+            }
+            java.nio.file.Path target = outputDir.resolve(namePart).normalize();
+            if (!target.startsWith(outputDir)) {
+                throw new IOException("invalid file name returned by server");
+            }
+            File file = target.toFile();
 
             byte[] bytes = Base64.getDecoder().decode(verData.getFileContents());
 

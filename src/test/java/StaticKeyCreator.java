@@ -1,13 +1,9 @@
-import util.JWUtil;
+import util.KeyGen;
 
 public class StaticKeyCreator {
 
-    public static void main(String[] args) {
-
-       var key =  JWUtil.createKey();
-       JWUtil.writeToFile(key,"/home/manoj/IdeaProjects/TIP/src/main/resources/key.json");
-
-
-
+    // Kept for compatibility; use util.KeyGen directly.
+    public static void main(String[] args) throws Exception {
+        KeyGen.main(args);
     }
 }

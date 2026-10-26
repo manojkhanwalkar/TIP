@@ -1,0 +1,7 @@
+target/
+# Keys and keystores are generated locally and must never be committed
+*.jks
+*.p12
+*.pfx
+*key*.json
+dependency-reduced-pom.xml
