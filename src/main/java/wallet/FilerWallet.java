@@ -18,9 +18,16 @@ public class FilerWallet extends Wallet{
 
     public static FilerWallet create(String tipURL)
     {
-        URL resource = FilerWallet.class.getClassLoader().getResource("key.json");
-        // var str = Resources.toString(resource, Charset.defaultCharset());
-        var key = JWUtil.readJWKFromFile(resource.getFile());
+        // The wallet's long lived private key is kept outside the repository and the jar.
+        // Its location comes from -Dtip.wallet.key=<path> or the TIP_WALLET_KEY_PATH env variable.
+        String keyPath = System.getProperty("tip.wallet.key", System.getenv("TIP_WALLET_KEY_PATH"));
+        if (keyPath == null || keyPath.isBlank()) {
+            throw new IllegalStateException("Set -Dtip.wallet.key or TIP_WALLET_KEY_PATH to the wallet private key (JWK) file");
+        }
+        var key = JWUtil.readJWKFromFile(keyPath);
+        if (key == null || !key.isPrivate()) {
+            throw new IllegalStateException("Could not read a private wallet key from " + keyPath);
+        }
 
 
         return new FilerWallet(tipURL,key);

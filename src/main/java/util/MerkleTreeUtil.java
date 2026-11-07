@@ -18,7 +18,7 @@ public class MerkleTreeUtil {
 
     static {
         mapper = new ObjectMapper();
-        mapper.enableDefaultTyping();
+        mapper.activateDefaultTyping(JSONUtil.typeValidator(), ObjectMapper.DefaultTyping.OBJECT_AND_NON_CONCRETE);
 
 
     }

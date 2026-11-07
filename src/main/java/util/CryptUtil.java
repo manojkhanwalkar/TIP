@@ -1,6 +1,7 @@
 package util;
 
 import javax.crypto.*;
+import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.*;
 import java.security.*;
@@ -120,6 +121,10 @@ public class CryptUtil {
 
     static SecureRandom secureRandom = new SecureRandom();
 
+    private static final String AES_TRANSFORMATION = "AES/GCM/NoPadding";
+    private static final int GCM_IV_LENGTH = 12;
+    private static final int GCM_TAG_BITS = 128;
+
 
 
     public static SymKeyStringTuple encrypt(String message, PublicKey key)
@@ -129,9 +134,17 @@ public class CryptUtil {
             generator.init(256); // The AES key size in number of bits
             SecretKey secKey = generator.generateKey();
 
-            Cipher cipher =  Cipher.getInstance("AES");
-            cipher.init(Cipher.ENCRYPT_MODE, secKey);
-            String encryptedMessage = Base64.getEncoder().encodeToString(cipher.doFinal(message.getBytes("UTF-8")));
+            // AES-GCM (authenticated encryption) with a random 96-bit IV, sent as IV || ciphertext.
+            // Plain "AES" resolves to AES/ECB/PKCS5Padding, which leaks patterns and has no integrity.
+            byte[] iv = new byte[GCM_IV_LENGTH];
+            secureRandom.nextBytes(iv);
+            Cipher cipher =  Cipher.getInstance(AES_TRANSFORMATION);
+            cipher.init(Cipher.ENCRYPT_MODE, secKey, new GCMParameterSpec(GCM_TAG_BITS, iv));
+            byte[] cipherText = cipher.doFinal(message.getBytes("UTF-8"));
+            byte[] out = new byte[iv.length + cipherText.length];
+            System.arraycopy(iv, 0, out, 0, iv.length);
+            System.arraycopy(cipherText, 0, out, iv.length, cipherText.length);
+            String encryptedMessage = Base64.getEncoder().encodeToString(out);
 
         
             Cipher cipher1 = Cipher.getInstance("ECIES");
@@ -155,6 +168,8 @@ public class CryptUtil {
             e.printStackTrace();
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
+        } catch (InvalidAlgorithmParameterException e) {
+            e.printStackTrace();
         }
 
         return null;
@@ -170,10 +185,14 @@ public class CryptUtil {
           byte[] decryptedKey = cipher.doFinal(Base64.getDecoder().decode(key));
 
           SecretKey originalKey = new SecretKeySpec(decryptedKey, 0, decryptedKey.length, "AES");
-          Cipher aesCipher = Cipher.getInstance("AES");
-          aesCipher.init(Cipher.DECRYPT_MODE, originalKey);
-          byte[] bytePlainText = aesCipher.doFinal(Base64.getDecoder().decode(message));
-          String plainText = new String(bytePlainText);
+          byte[] in = Base64.getDecoder().decode(message);
+          if (in.length < GCM_IV_LENGTH + GCM_TAG_BITS / 8) {
+              return null;
+          }
+          Cipher aesCipher = Cipher.getInstance(AES_TRANSFORMATION);
+          aesCipher.init(Cipher.DECRYPT_MODE, originalKey, new GCMParameterSpec(GCM_TAG_BITS, in, 0, GCM_IV_LENGTH));
+          byte[] bytePlainText = aesCipher.doFinal(in, GCM_IV_LENGTH, in.length - GCM_IV_LENGTH);
+          String plainText = new String(bytePlainText, java.nio.charset.StandardCharsets.UTF_8);
 
           return plainText;
       } catch (NoSuchAlgorithmException e) {
@@ -185,6 +204,8 @@ public class CryptUtil {
       } catch (IllegalBlockSizeException e) {
           e.printStackTrace();
       } catch (BadPaddingException e) {
+          e.printStackTrace();
+      } catch (InvalidAlgorithmParameterException | IllegalArgumentException e) {
           e.printStackTrace();
       }
 

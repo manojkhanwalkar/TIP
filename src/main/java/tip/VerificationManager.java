@@ -27,9 +27,10 @@ public class VerificationManager {
     JWK signPrivateKey;
     JWK signPublicKey;
 
-    public VerificationManager()
+    public VerificationManager(JWK signPrivateKey)
     {
-        createSignKeys();
+        this.signPrivateKey = signPrivateKey;
+        this.signPublicKey = signPrivateKey.toPublicJWK();
     }
 
     public Token verify(Attributes data, JWK clientPublicKey)
@@ -95,12 +96,6 @@ public class VerificationManager {
 
 
 
-    private void createSignKeys()
-    {
-        signPrivateKey = JWUtil.createKey();
-        signPublicKey = signPrivateKey.toPublicJWK();
-
-    }
     private Token createToken()
     {
         Token token = new Token();

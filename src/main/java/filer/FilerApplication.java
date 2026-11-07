@@ -2,6 +2,8 @@ package filer;
 
 
 import io.dropwizard.Application;
+import io.dropwizard.configuration.EnvironmentVariableSubstitutor;
+import io.dropwizard.configuration.SubstitutingSourceProvider;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -21,6 +23,8 @@ public class FilerApplication extends Application<FilerConfiguration> {
 
     @Override
     public void initialize(Bootstrap<FilerConfiguration> bootstrap) {
+        bootstrap.setConfigurationSourceProvider(new SubstitutingSourceProvider(
+                bootstrap.getConfigurationSourceProvider(), new EnvironmentVariableSubstitutor(true)));
 
         Security.setProperty("crypto.policy", "unlimited");
         Security.addProvider(new BouncyCastleProvider());
@@ -33,7 +37,9 @@ public class FilerApplication extends Application<FilerConfiguration> {
                     Environment environment) {
         final FilerResource resource = new FilerResource(
                 configuration.getTemplate(),
-                configuration.getDefaultName()
+                configuration.getDefaultName(),
+                new FilerManager(configuration.getFilesDirectory()),
+                configuration.getMaxFileContentsLength()
         );
 
 

@@ -1,7 +1,11 @@
 package tip;
 
 
+import com.nimbusds.jose.jwk.JWK;
 import io.dropwizard.Application;
+import io.dropwizard.configuration.EnvironmentVariableSubstitutor;
+import io.dropwizard.configuration.SubstitutingSourceProvider;
+import util.JWUtil;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -21,6 +25,8 @@ public class TIPApplication extends Application<TIPConfiguration> {
 
     @Override
     public void initialize(Bootstrap<TIPConfiguration> bootstrap) {
+        bootstrap.setConfigurationSourceProvider(new SubstitutingSourceProvider(
+                bootstrap.getConfigurationSourceProvider(), new EnvironmentVariableSubstitutor(true)));
 
         Security.setProperty("crypto.policy", "unlimited");
         Security.addProvider(new BouncyCastleProvider());
@@ -35,7 +41,8 @@ public class TIPApplication extends Application<TIPConfiguration> {
                     Environment environment) {
         final TIPResource resource = new TIPResource(
                 configuration.getTemplate(),
-                configuration.getDefaultName()
+                configuration.getDefaultName(),
+                new VerificationManager(loadSigningKey(configuration.getSigningKeyPath()))
         );
 
 
@@ -43,5 +50,14 @@ public class TIPApplication extends Application<TIPConfiguration> {
 
 
 }
+
+
+    private static JWK loadSigningKey(String path) {
+        JWK key = JWUtil.readJWKFromFile(path);
+        if (key == null || !key.isPrivate()) {
+            throw new IllegalStateException("Could not read a private TIP signing key from " + path);
+        }
+        return key;
+    }
 
 }

@@ -11,6 +11,21 @@ public class SampleConfiguration extends Configuration {
     @NotEmpty
     private String defaultName = "Stranger";
 
+    // Path to the TIP's public signing key (JWK JSON). Required: signatures are only
+    // accepted if they verify against this key.
+    @NotEmpty
+    private String tipPublicKeyPath;
+
+    @JsonProperty
+    public String getTipPublicKeyPath() {
+        return tipPublicKeyPath;
+    }
+
+    @JsonProperty
+    public void setTipPublicKeyPath(String tipPublicKeyPath) {
+        this.tipPublicKeyPath = tipPublicKeyPath;
+    }
+
     @JsonProperty
     public String getTemplate() {
         return template;

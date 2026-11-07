@@ -19,20 +19,44 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.regex.Pattern;
 
 
 public class FilerManager {
 
-    String filesDirectory = "/home/manoj/data/filer/";
+    // Tokens are server generated random UUIDs; anything else is rejected before it is used
+    // to build a file path (prevents path traversal such as "../../etc/passwd").
+    private static final Pattern TOKEN_PATTERN =
+            Pattern.compile("^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$");
+
+    private final Path filesDirectory;
 
     JWK signPrivateKey;
     JWK signPublicKey;
 
     //TODO - change the keys to static.
 
-    public FilerManager()
+    public FilerManager(String filesDirectory)
     {
+        this.filesDirectory = Paths.get(filesDirectory).toAbsolutePath().normalize();
         createSignKeys();
+    }
+
+    static boolean isValidToken(String token)
+    {
+        return token != null && TOKEN_PATTERN.matcher(token).matches();
+    }
+
+    private Path resolve(String token)
+    {
+        if (!isValidToken(token)) {
+            throw new IllegalArgumentException("invalid token");
+        }
+        Path path = filesDirectory.resolve(token).normalize();
+        if (!path.startsWith(filesDirectory)) {
+            throw new IllegalArgumentException("invalid token");
+        }
+        return path;
     }
 
     public Token update(String fileContents, String fileName , JWK clientPublicKey)
@@ -67,7 +91,7 @@ public class FilerManager {
 
    private void createFile(String fileName , String fileContents)
    {
-      Path path = Paths.get(filesDirectory+fileName);
+      Path path = resolve(fileName);
 
        try {
            Files.writeString(path,fileContents);
@@ -79,7 +103,10 @@ public class FilerManager {
    private SymKeyStringTuple getFile(String fileName)
    {
        try {
-           Path path = Paths.get(filesDirectory+fileName);
+           Path path = resolve(fileName);
+           if (!Files.isRegularFile(path)) {
+               return null;
+           }
            String fileContents = Files.readString(path);
            var tupleString = (SymKeyStringTuple)JSONUtil.fromJSON(fileContents,SymKeyStringTuple.class);
 
@@ -110,6 +137,10 @@ public class FilerManager {
     public FileRetrieveResponse retrieve(Token token) {
         FileRetrieveResponse response = new FileRetrieveResponse();
 
+
+        if (token == null || !isValidToken(token.getToken())) {
+            return response;
+        }
 
         var tuple = getFile(token.getToken());
         if (tuple!=null)

@@ -48,8 +48,6 @@ public class TipWallet extends Wallet{
 
         TokenResponse response = connector.token(request);
 
-        System.out.println(response.getEncryptedKey() + " \n" + response.getEncryptedVerifiedData());
-
         String resp = null;
         try {
             resp = CryptUtil.decrypt(response.getEncryptedVerifiedData(),response.getEncryptedKey(),privateKey.toECKey().toPrivateKey());
